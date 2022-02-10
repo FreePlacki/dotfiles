@@ -9,6 +9,8 @@
 (setq user-full-name "Paweł Bielecki"
       user-mail-address "bieleckipawel10@gmail.com")
 
+(add-hook! 'emacs-startup-hook 'toggle-frame-maximized)
+
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 ;;
