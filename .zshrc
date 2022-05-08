@@ -121,9 +121,19 @@ SAVEHIST=1000
 bindkey -v
 # End of lines configured by zsh-newuser-install
 
+export BROWSER='/usr/bin/librewolf'
+export EDITOR='/usr/bin/vim'
+export VISUAL='/usr/bin/vim'
+
 eval "$(starship init zsh)"
 
 # block cursor
 #echo '\e[5 q'
 
-fortune | cowsay -f tux
+alias e='exa --icons'
+alias el='exa --icons --long --header --git --no-user'
+alias t='exa --icons --tree --level=2'
+
+fortune | cowsay -f tux | lolcat
+
+eval $(thefuck --alias)
