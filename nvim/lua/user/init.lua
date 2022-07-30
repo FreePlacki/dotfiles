@@ -33,6 +33,17 @@ local config = {
     end,
   },
 
+  -- Set dashboard header
+  header = {
+    " ",
+    "███    ██ ██    ██ ██ ███    ███",
+    "████   ██ ██    ██ ██ ████  ████",
+    "██ ██  ██ ██    ██ ██ ██ ████ ██",
+    "██  ██ ██  ██  ██  ██ ██  ██  ██",
+    "██   ████   ████   ██ ██      ██",
+    " ",
+  },
+
   -- set vim options here (vim.<first_key>.<second_key> =  value)
   options = {
     opt = {
