@@ -56,6 +56,8 @@ local config = {
       neovide_cursor_animation_length = 0.07,
       neovide_cursor_trail_length = 0.0,
       neovide_scroll_animation_length = 0.3,
+      rustfmt_autosave = 1,
+      -- python3_host_prog="/usr/bin/python3",
     },
   },
 
@@ -111,6 +113,8 @@ local config = {
       -- },
       { "morhetz/gruvbox" },
       { "kdheepak/lazygit.nvim" },
+      -- { "vim-autoformat/vim-autoformat" },
+      { "rust-lang/rust.vim" },
     },
     -- All other entries override the setup() call for default plugins
     ["null-ls"] = function(config)
@@ -156,6 +160,14 @@ local config = {
     filetype_extend = {
       javascript = { "javascriptreact" },
     },
+  },
+
+  telescope = {
+    pickers = {
+      find_files = {
+        hidden = true,
+      }
+    }
   },
 
   -- Modify which-key registration
