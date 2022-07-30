@@ -237,6 +237,8 @@ local config = {
     n = {
       -- second key is the lefthand side of the map
       ["<C-s>"] = { ":w!<cr>", desc = "Save File" },
+      -- find hidden files (except .git) with telescope
+      ["<leader>ff"] = {"<cmd>lua require'telescope.builtin'.find_files({ find_command = {'rg', '--files', '--hidden', '-g', '!.git' }})<cr>", desc="Find file"},
     },
     t = {
       -- setting a mapping to false will disable it
