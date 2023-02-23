@@ -73,6 +73,15 @@ return packer.startup(function(use)
   }
   use "p00f/nvim-ts-rainbow"
 
+  use "windwp/nvim-autopairs"
+
+  use {
+    'numToStr/Comment.nvim',
+    config = function()
+        require('Comment').setup()
+    end
+  }
+
   -- Automatically set up your configuration after cloning packer.nvim
   if PACKER_BOOTSTRAP then
     require("packer").sync()
