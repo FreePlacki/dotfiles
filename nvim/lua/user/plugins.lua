@@ -82,6 +82,13 @@ return packer.startup(function(use)
     end
   }
 
+  use {
+    'lewis6991/impatient.nvim',
+    config = function()
+        require('impatient')
+    end
+  }
+
   -- Automatically set up your configuration after cloning packer.nvim
   if PACKER_BOOTSTRAP then
     require("packer").sync()
