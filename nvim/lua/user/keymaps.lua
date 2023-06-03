@@ -69,3 +69,6 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 -- Telescope
 keymap("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
+
+-- RustFmt
+keymap("n", "<C-s>", "<cmd>%! rustfmt<cr>", opts)

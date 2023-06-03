@@ -51,8 +51,12 @@ return packer.startup(function(use)
   use "hrsh7th/cmp-buffer"
   use "hrsh7th/cmp-path"
   use "hrsh7th/cmp-cmdline"
+  use "saadparwaiz1/cmp_luasnip"
   use "hrsh7th/cmp-nvim-lsp"
   use "hrsh7th/cmp-nvim-lua"
+
+  use "L3MON4D3/LuaSnip"
+  use "rafamadriz/friendly-snippets"
 
   -- LSP
   use "neovim/nvim-lspconfig"
@@ -71,7 +75,7 @@ return packer.startup(function(use)
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate",
   }
-  use "p00f/nvim-ts-rainbow"
+  -- use "p00f/nvim-ts-rainbow" -- A lot of bugs for now
 
   use "windwp/nvim-autopairs"
 
@@ -82,12 +86,28 @@ return packer.startup(function(use)
     end
   }
 
-  use {
-    'lewis6991/impatient.nvim',
-    config = function()
-        require('impatient')
-    end
-  }
+  use 'lewis6991/impatient.nvim'
+  -- use {
+  --   'lewis6991/impatient.nvim',
+  --   config = function()
+  --       require('impatient')
+  --   end
+  -- }
+  
+  -- use {
+  --  "goolord/alpha-nvim",
+  --  config = function()
+  --     require('alpha').setup()
+  --  end
+  -- }
+  use "goolord/alpha-nvim"
+
+--     use {
+--     'goolord/alpha-nvim',
+--     config = function ()
+--         require'alpha'.setup(require'alpha.themes.dashboard'.config)
+--     end
+-- }
 
   -- Automatically set up your configuration after cloning packer.nvim
   if PACKER_BOOTSTRAP then
