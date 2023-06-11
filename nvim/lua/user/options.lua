@@ -17,7 +17,7 @@ local options = {
 	number = true,
 	relativenumber = true,
     numberwidth = 4,
-    signcolumn = "number",
+    signcolumn = "no",
     wrap = false,
     scrolloff = 8,
 }

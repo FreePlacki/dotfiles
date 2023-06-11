@@ -69,6 +69,7 @@ keymap("t", "<C-l>", "<C-\\><C-N><C-w>l", term_opts)
 
 -- Telescope
 keymap("n", "<leader>f", "<cmd>Telescope find_files<cr>", opts)
+keymap("n", "<leader>t", "<cmd>TodoTelescope<cr>", opts)
 
 -- RustFmt
-keymap("n", "<C-s>", "<cmd>%! rustfmt<cr>", opts)
+keymap("n", "<C-s>", "<cmd>let v = winsaveview()<cr>:%! rustfmt<cr>:w<cr>:call winrestview(v)<cr>", opts)
