@@ -121,19 +121,21 @@ SAVEHIST=1000
 bindkey -v
 # End of lines configured by zsh-newuser-install
 
-export BROWSER='/usr/bin/librewolf'
-export EDITOR='/usr/bin/vim'
-export VISUAL='/usr/bin/vim'
-
-eval "$(starship init zsh)"
-
-# block cursor
-#echo '\e[5 q'
-
+# aliases
 alias e='exa --icons'
 alias el='exa --icons --long --header --git --no-user'
 alias t='exa --icons --tree --level=2'
 
-fortune | cowsay -f tux | lolcat
+eval "$(starship init zsh)"
+
+export PATH="$HOME/coding/stuff/target/release:$PATH"
+
+export GOPATH="$HOME/coding/gocode"
+
+# block cursor
+#echo '\e[5 q'
+
+#fortune | cowsay -f tux | lolcat
+neofetch --ascii_distro Arch_small --cpu_temp C --cpu_cores off --speed_shorthand on --cpu_brand off --gpu_brand off --gpu_type all --disable de shell resolution term title underline icons theme
 
 eval $(thefuck --alias)
