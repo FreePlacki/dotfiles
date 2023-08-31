@@ -16,13 +16,13 @@ symbol = " "
 symbol = " "
 
 [conda]
-symbol = " "
+symbol = "󰯳 "
 
 [dart]
 symbol = " "
 
 [directory]
-read_only = " "
+read_only = "  "
 
 [docker_context]
 symbol = " "
@@ -51,27 +51,30 @@ symbol = " "
 [julia]
 symbol = " "
 
+[lua]
+symbol = "󰢱 "
+
 [memory_usage]
-symbol = " "
+symbol = "󰍛 "
 
 [nim]
-symbol = " "
+symbol = " "
 
 [nix_shell]
 symbol = " "
 
 [nodejs]
-symbol = " "
+symbol = "󰎙 "
 
 [package]
-symbol = " "
+symbol = " "
 
 [python]
-symbol = " "
+symbol = "󰌠 "
 
 [spack]
 symbol = "🅢 "
 
 [rust]
-symbol = " "
+symbol = "󱘗 "
 

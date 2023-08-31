@@ -31,29 +31,29 @@ function M.setup()
   }
 
   dashboard.section.buttons.val = {
-    dashboard.button("f", "  Find file", ":Telescope find_files <CR>"),
-    dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
+    dashboard.button("f", "󰱽  Find file", ":Telescope find_files <CR>"),
+    dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
     -- dashboard.button("p", "  Find project", ":Telescope projects <CR>"),
-    dashboard.button("r", "  Recently used files", ":Telescope oldfiles <CR>"),
-    dashboard.button("t", "  Find text", ":Telescope live_grep <CR>"),
+    dashboard.button("r", "  Recently used files", ":Telescope oldfiles <CR>"),
+    dashboard.button("t", "  Find text", ":Telescope live_grep <CR>"),
     -- dashboard.button("c", "  Configuration", ":e $MYVIMRC<CR>"),
-    dashboard.button("q", "  Quit Neovim", ":qa<CR>"),
+    dashboard.button("q", "󰗼  Quit Neovim", ":qa<CR>"),
   }
 
   local function footer()
     -- Number of plugins
     local total_plugins = #vim.fn.globpath("~/.local/share/nvim/site/pack/packer/start", "*", 0, 1)
     local datetime = os.date "%d-%m-%Y %H:%M:%S"
-    local plugins_text = "   "
+    local plugins_text = "    "
       .. total_plugins
       .. " plugins"
-      .. "   v"
+      .. "   "
       .. vim.version().major
       .. "."
       .. vim.version().minor
       .. "."
       .. vim.version().patch
-      .. "   "
+      .. "  󰃰 "
       .. datetime
 
     -- Quote
