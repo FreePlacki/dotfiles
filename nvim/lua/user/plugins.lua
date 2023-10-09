@@ -57,6 +57,27 @@ local plugins = {
             require 'alpha'.setup(require 'alpha.themes.dashboard'.config)
         end
     },
+    { 'Eandrju/cellular-automaton.nvim' },
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        opts = {
+            search = {
+                pattern = [[\b(KEYWORDS)\b]], -- default: [[\b(KEYWORDS):]]
+            },
+        }
+    },
+    {
+        "iamcco/markdown-preview.nvim",
+        ft = "markdown",
+        build = function()
+            vim.fn["mkdp#util#install"]()
+        end,
+    },
+    -- breaks notetaker
+    -- { 'ixru/nvim-markdown' },
+    { 'btjanaka-vim/vim-markdown-latex-highlight' },
+    { 'lervag/vimtex' },
 }
 
 local opts = {}

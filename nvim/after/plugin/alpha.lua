@@ -28,7 +28,7 @@ dashboard.section.buttons.val = {
     dashboard.button("f", "󰱽  Find file", ":Telescope find_files <CR>"),
     dashboard.button("e", "  New file", ":ene <BAR> startinsert <CR>"),
     -- dashboard.button("p", "  Find project", ":Telescope projects <CR>"),
-    dashboard.button("r", "  Recently used files", ":Telescope oldfiles <CR>"),
+    -- dashboard.button("r", "  Recently used files", ":Telescope oldfiles <CR>"),
     dashboard.button("t", "  Find text", ":Telescope live_grep <CR>"),
     -- dashboard.button("c", "  Configuration", ":e $MYVIMRC<CR>"),
     dashboard.button("q", "󰗼  Quit Neovim", ":qa<CR>"),
@@ -54,6 +54,7 @@ local function footer()
     local fortune = require "alpha.fortune"
     local quote = table.concat(fortune(), "\n")
 
+    -- local tip = os.shuf "-n 1 ~/nvim_keymaps.txt"
     return plugins_text .. "\n" .. quote
 end
 
