@@ -78,6 +78,7 @@ local plugins = {
     -- { 'ixru/nvim-markdown' },
     { 'btjanaka-vim/vim-markdown-latex-highlight' },
     { 'lervag/vimtex' },
+    { 'SirVer/ultisnips' },
 }
 
 local opts = {}
