@@ -79,6 +79,12 @@ local plugins = {
     { 'btjanaka-vim/vim-markdown-latex-highlight' },
     { 'lervag/vimtex' },
     { 'SirVer/ultisnips' },
+    {
+        "nvim-telescope/telescope-frecency.nvim",
+        config = function()
+            require("telescope").load_extension "frecency"
+        end,
+    },
 }
 
 local opts = {}
