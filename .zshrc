@@ -1,6 +1,9 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
+# export XDG_RUNTIME_DIR="/tmp/runtime-${USER}"
+
+
 # Path to your oh-my-zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
@@ -122,20 +125,31 @@ bindkey -v
 # End of lines configured by zsh-newuser-install
 
 # aliases
-alias e='exa --icons'
-alias el='exa --icons --long --header --git --no-user'
-alias t='exa --icons --tree --level=2'
+# add --icons
+alias e='exa'
+alias el='exa --long --header --git --no-user'
+alias t='exa --tree --level=2'
+
 
 eval "$(starship init zsh)"
 
 export PATH="$HOME/coding/stuff/target/release:$PATH"
+export PATH=$PATH:~/.local/bin
 
 export GOPATH="$HOME/coding/gocode"
 
-# block cursor
-#echo '\e[5 q'
 
-#fortune | cowsay -f tux | lolcat
-neofetch --ascii_distro Arch_small --cpu_temp C --cpu_cores off --speed_shorthand on --cpu_brand off --gpu_brand off --gpu_type all --disable de shell resolution term title underline icons theme
+# fortune | cowsay -f tux | lolcat
+nerdfetch
+# nvim tip:
+echo '\n'
+shuf -n 1 ~/nvim_keymaps.txt
+shuf -n 1 ~/quick_notes.md
 
 eval $(thefuck --alias)
+
+# block cursor
+echo -ne '\e[1 q'
+
+# opam configuration
+[[ ! -r /home/freeplacki/.opam/opam-init/init.zsh ]] || source /home/freeplacki/.opam/opam-init/init.zsh  > /dev/null 2> /dev/null
