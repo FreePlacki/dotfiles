@@ -7,7 +7,7 @@
     // Choose the order of the modules
     "modules-left": ["hyprland/workspaces", "hyprland/mode", "hyprland/scratchpad", "custom/media"],
     "modules-center": ["mpris"], // hyprland/window
-    "modules-right": ["pulseaudio", "network", "cpu", "memory", "disk", "keyboard-state", "clock", "tray"],
+    "modules-right": ["pulseaudio", "network", "cpu", "memory", "disk", "keyboard-state", "clock", "custom/weather", "tray"],
     // Modules configuration
     // "hyprland/workspaces": {
     //     "disable-scroll": true,
@@ -153,10 +153,10 @@
     },
     "pulseaudio": {
         // "scroll-step": 1, // %, can be a float
-        "format": "{volume}% {format_source}",
+        "format": "󰕾 {volume}% {format_source}",
         "format-bluetooth": "󰋋 {volume}% {format_source}",
         "format-bluetooth-muted": "󰟎 {volume}% {format_source}",
-        "format-muted": "   {format_source}",
+        "format-muted": " {volume}% {format_source}",
         "format-source": "| 󰍬 {volume}%",
         "format-source-muted": "| 󰍭",
         "on-click": "pavucontrol"
@@ -181,6 +181,13 @@
         "escape": true,
         "exec": "$HOME/.config/waybar/mediaplayer.py 2> /dev/null" // Script in resources folder
         // "exec": "$HOME/.config/waybar/mediaplayer.py --player spotify 2> /dev/null" // Filter player based on name
-    }
+    },
+    "custom/weather": {
+        "format": "{}",
+        "tooltip": true,
+        "interval": 3600,
+        "exec": "wttrbar --location \"Warsaw\" --custom-indicator \"{ICON} {temp_C}({FeelsLikeC})\"",
+        "return-type": "json"
+    },
 }
 
