@@ -24,6 +24,24 @@ require("lspconfig").pylsp.setup({
     }
 })
 
+-- require("lspconfig").pyright.setup({
+--     settings = {
+--         pyright = {
+--             python = {
+--                 analysis = {
+--                     useLibraryCodeForTypes = true,
+--                     diagnosticSeverityOverrides = {
+--                         reportGeneralTypeIssues = "none",
+--                         reportOptionalMemberAccess = "none",
+--                         reportOptionalSubscript = "none",
+--                         reportPrivateImportUsage = "none",
+--                     },
+--                 },
+--             },
+--         },
+--     },
+-- })
+
 -- local ls = require('luasnip')
 -- local snip = ls.snippet
 -- local node = ls.snippet_node
