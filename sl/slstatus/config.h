@@ -63,13 +63,17 @@ static const char unknown_str[] = "n/a";
  * wifi_essid          WiFi ESSID                      interface name (wlan0)
  * wifi_perc           WiFi signal in percent          interface name (wlan0)
  */
+
+#define delm "   "
 static const struct arg args[] = {
-	/* function format          argument */
-    { cpu_perc, "[CPU %s%% (",      NULL},
-    { temp, "%sC)]   ",             "/sys/class/thermal/thermal_zone0/temp"},
-    { ram_perc, "[RAM %s%%",        NULL},
-    { swap_perc, " (%s%%)]   ",     NULL},
-    { disk_perc, "[DISK %s%%]   ",  "/"},
-    { run_command, "[VOL %s]   ",   "amixer sget Master | awk -F'[][]' '{print $2}' | tail -n1"},
-	{ datetime, "%s",               "%F %T" },
+	/* function     format              argument */
+    { cpu_perc,     "   %s%% (",       NULL},
+    { temp,         "%sC)" delm,        "/sys/class/thermal/thermal_zone0/temp"},
+    { ram_perc,     " %s%%",           NULL},
+    { swap_perc,    " (%s%%)" delm,     NULL},
+    { disk_perc,    "󱛟%s%%" delm,       "/"},
+    { run_command,  "  %s" delm,       "amixer sget Master | awk -F'[][]' '{print $2}' | tail -n1"},
+    { battery_perc, "%s" delm,      "BAT0"},
+    { run_command,  "%s" delm,          "curl -sf 'wttr.in/Warsaw,Poland?format=%C,%t'"},
+	{ datetime,     "%s",               "%F %T" },
 };

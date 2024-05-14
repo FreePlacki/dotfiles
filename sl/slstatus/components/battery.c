@@ -46,7 +46,18 @@
 		if (pscanf(path, "%d", &cap_perc) != 1)
 			return NULL;
 
-		return bprintf("%d", cap_perc);
+    	static char *symbol[] = {
+			"󱃍", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹",
+		};
+
+        static char *charging[] = {
+            "󰢟", "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰢝", "󰢞", "󰢞", "󰂋", "󰂅",
+        };
+
+        if (battery_state(bat)[0] == '+')
+		    return bprintf("%s%d%%", charging[cap_perc / 11], cap_perc);
+
+		return bprintf("%s%d%%", symbol[cap_perc / 11], cap_perc);
 	}
 
 	const char *
