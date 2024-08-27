@@ -24,46 +24,17 @@ require("lspconfig").pylsp.setup({
     }
 })
 
--- require("lspconfig").pyright.setup({
---     settings = {
---         pyright = {
---             python = {
---                 analysis = {
---                     useLibraryCodeForTypes = true,
---                     diagnosticSeverityOverrides = {
---                         reportGeneralTypeIssues = "none",
---                         reportOptionalMemberAccess = "none",
---                         reportOptionalSubscript = "none",
---                         reportPrivateImportUsage = "none",
---                     },
---                 },
---             },
---         },
---     },
--- })
+-- run clippy on save
+require("lspconfig").rust_analyzer.setup({
+    settings = {
+        ["rust-analyzer"] = {
+            check = {
+                command = "clippy"
+            }
+        }
+    }
+})
 
--- local ls = require('luasnip')
--- local snip = ls.snippet
--- local node = ls.snippet_node
--- local text = ls.text_node
--- local insert = ls.insert_node
--- local func = ls.function_node
--- local choice = ls.choice_node
--- local dynamicn = ls.dynamic_node
---
--- local date = function() return {os.date('%Y-%m-%d')} end
---
--- ls.add_snippets(nil, {
---     all = {
---         snip({
---             trig = "date",
---             namr = "Date",
---             dscr = "Date in the form of YYYY-MM-DD",
---         }, {
---             func(date, {}),
---         }),
---     },
--- })
 
 local cmp = require('cmp')
 local cmp_action = require('lsp-zero').cmp_action()
