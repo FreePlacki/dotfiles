@@ -11,6 +11,10 @@ bindkey -v
 export BROWSER="firefox"
 export EDITOR="nvim"
 
+export PATH="/usr/bin/kotlinc/bin:$PATH"
+
+export ANDROID_SDK_ROOT="$HOME/android-cmdtools"
+
 alias e='exa'
 alias el='exa --long --header --git --no-user'
 alias t='exa --tree --level=2'

@@ -43,3 +43,5 @@ set recolor                     "true"
 set recolor-keephue             true      # keep original color
 
 # --- GRUVBOX END ---
+
+set selection-clipboard clipboard

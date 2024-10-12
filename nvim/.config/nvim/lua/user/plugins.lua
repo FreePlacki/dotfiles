@@ -22,6 +22,14 @@ local plugins = {
     { "ellisonleao/gruvbox.nvim",        priority = 1000,    config = function() vim.cmd("colorscheme gruvbox") end },
     { "ThePrimeagen/harpoon" },
     { "mbbill/undotree" },
+    {
+        "ggandor/leap.nvim",
+        config = function()
+            local leap = require('leap')
+            leap.add_default_mappings()
+            leap.opts.case_sensitive = true
+        end,
+    },
 
     {
         'VonHeikemen/lsp-zero.nvim',
@@ -84,6 +92,23 @@ local plugins = {
         config = function()
             require("telescope").load_extension "frecency"
         end,
+    },
+    {
+        "ej-shafran/compile-mode.nvim",
+        branch = "latest",
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            -- if you want to enable coloring of ANSI escape codes in
+            -- compilation output, add:
+            { "m00qek/baleia.nvim", tag = "v1.3.0" },
+        },
+        config = function()
+            ---@type CompileModeOpts
+            vim.g.compile_mode = {
+                -- to add ANSI escape code support, add:
+                baleia_setup = true,
+            }
+        end
     },
 }
 
