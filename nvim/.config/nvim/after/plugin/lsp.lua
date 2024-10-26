@@ -15,7 +15,7 @@ require("mason-lspconfig").setup({
 })
 
 vim.diagnostic.config({
-    virtual_text = false,
+    virtual_text = true,
 })
 
 require("lspconfig").pylsp.setup({
