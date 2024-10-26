@@ -14,6 +14,9 @@ export EDITOR="nvim"
 export PATH="/usr/bin/kotlinc/bin:$PATH"
 export PATH="/usr/local/MATLAB/R2024b/bin:$PATH"
 
+export DOTNET_ROOT="$HOME/dotnet"
+export PATH="$HOME/dotnet:$PATH"
+
 export ANDROID_SDK_ROOT="$HOME/android-cmdtools"
 
 alias e='exa'

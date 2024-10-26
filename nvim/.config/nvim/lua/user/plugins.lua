@@ -86,7 +86,7 @@ local plugins = {
     -- { 'ixru/nvim-markdown' },
     { 'btjanaka-vim/vim-markdown-latex-highlight' },
     { 'lervag/vimtex' },
-    { 'SirVer/ultisnips' },
+    -- { 'SirVer/ultisnips' },
     {
         "nvim-telescope/telescope-frecency.nvim",
         config = function()

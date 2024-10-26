@@ -51,6 +51,11 @@ local cmp_mappings = cmp.mapping.preset.insert({
 })
 
 cmp.setup({
+    snippet = {
+        expand = function(args)
+            vim.snippet.expand(args.body) -- native nvim (from 0.10)
+        end,
+    },
     window = {
         completion = cmp.config.window.bordered(),
         documentation = cmp.config.window.bordered(),
@@ -58,6 +63,12 @@ cmp.setup({
     experimental = {
         ghost_text = true,
     },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' }, -- For vsnip users.
+    }, {
+      { name = 'buffer' },
+    }),
     mapping = cmp_mappings,
 })
 
