@@ -1,0 +1,9 @@
+theme = GruvboxDarkHard
+font-family = Cascadia Code
+font-size = 20
+cursor-style = block
+window-decoration = false
+desktop-notifications = false
+window-padding-y = 10,0
+window-padding-x = 10,10
+window-padding-color = extend
