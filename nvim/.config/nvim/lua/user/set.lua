@@ -1,4 +1,5 @@
 vim.opt.guicursor = ""
+vim.opt.clipboard = 'unnamedplus'
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
@@ -24,7 +25,7 @@ vim.opt.signcolumn = "yes"
 
 vim.opt.updatetime = 50
 
---vim.opt.colorcolumn = "80"
+vim.opt.colorcolumn = "80"
 
 vim.g.mapleader = " "
 
@@ -45,5 +46,12 @@ vim.api.nvim_create_autocmd("FileType", {
         vim.opt_local.expandtab = false
         vim.opt_local.tabstop = 4
         vim.opt_local.shiftwidth = 4
+    end,
+})
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "matlab",
+    callback = function()
+        vim.opt_local.colorcolumn = "75"
     end,
 })

@@ -42,7 +42,7 @@ nerdfetch
 # nvim tip:
 echo '\n'
 shuf -n 1 ~/nvim_keymaps.txt
-shuf -n 1 ~/quick_notes.md
+# shuf -n 1 ~/quick_notes.md
 
 eval $(thefuck --alias)
 

@@ -75,16 +75,16 @@ local plugins = {
             },
         }
     },
-    {
-        "iamcco/markdown-preview.nvim",
-        ft = "markdown",
-        build = function()
-            vim.fn["mkdp#util#install"]()
-        end,
-    },
+    -- {
+    --     "iamcco/markdown-preview.nvim",
+    --     ft = "markdown",
+    --     build = function()
+    --         vim.fn["mkdp#util#install"]()
+    --     end,
+    -- },
     -- breaks notetaker
     -- { 'ixru/nvim-markdown' },
-    { 'btjanaka-vim/vim-markdown-latex-highlight' },
+    -- { 'btjanaka-vim/vim-markdown-latex-highlight' },
     { 'lervag/vimtex' },
     -- { 'SirVer/ultisnips' },
     {
