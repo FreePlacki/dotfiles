@@ -11,4 +11,9 @@ vim.keymap.set("n", "[d", function() vim.diagnostic.jump {count = -1, float = tr
 
 vim.keymap.set("n", "<leader>pf", require("telescope.builtin").find_files)
 vim.keymap.set("n", "<leader>ps", require("telescope.builtin").live_grep)
+vim.keymap.set("n", "<leader>pd", require("telescope.builtin").diagnostics)
 vim.keymap.set("n", "<leader>h", require("telescope.builtin").help_tags)
+
+vim.keymap.set("n", "<C-n>", "<CMD>cnext<CR>")
+vim.keymap.set("n", "<C-p>", "<CMD>cprevious<CR>")
+vim.keymap.set("n", "<C-c>", "<CMD>cclose<CR>")
