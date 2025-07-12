@@ -8,7 +8,7 @@ SAVEHIST=1000
 bindkey -v
 # End of lines configured by zsh-newuser-install
 
-export BROWSER="firefox"
+export BROWSER="librewolf"
 export EDITOR="nvim"
 
 export PATH="/usr/bin/kotlinc/bin:$PATH"
