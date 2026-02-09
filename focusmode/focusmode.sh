@@ -34,13 +34,17 @@ mode=$(printf "%s\n" "${modes[@]}" | dmenu -b -i -p 'Set focus mode:')
 [ -z "$mode" ] && exit 0
 
 # Find index (1-based) of selected mode among modes[]
-index=0
+index=-1
 for i in "${!modes[@]}"; do
   if [ "${modes[i]}" = "$mode" ]; then
     index=$i
     break
   fi
 done
+
+if [ $index -eq -1 ]; then
+    exit 0
+fi
 
 color_index=$(( index % ${#colors[@]} ))
 color="${colors[$color_index]}"
