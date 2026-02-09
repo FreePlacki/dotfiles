@@ -52,6 +52,10 @@ color="${colors[$color_index]}"
 # Write formatted output
 echo "%{F$color}$mode%{F-}" > "$TMP"
 
+# notify polybar
+polybar-msg action focusmode hook 0
+
+# update timew
 if command -v timew >/dev/null 2>&1; then
   if [ "$mode" != "IDLE" ]; then
     timew start "$mode" >/dev/null 2>&1
