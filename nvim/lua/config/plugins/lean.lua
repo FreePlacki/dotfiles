@@ -1,5 +1,5 @@
 return {
-  'Julian/lean.nvim',
+  'https://codeberg.org/andyg/leap.nvim',
   event = { 'BufReadPre *.lean', 'BufNewFile *.lean' },
 
   dependencies = {
