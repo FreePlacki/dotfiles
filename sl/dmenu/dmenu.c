@@ -1,12 +1,19 @@
 /* See LICENSE file for copyright and license details. */
+#define _GNU_SOURCE
+#include <unistd.h>
 #include <ctype.h>
 #include <locale.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <strings.h>
 #include <time.h>
-#include <unistd.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <poll.h>
+#include <signal.h>
+#include <sys/prctl.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -25,14 +32,24 @@
 #define TEXTW(X)              (drw_fontset_getwidth(drw, (X)) + lrpad)
 
 /* enums */
-enum { SchemeNorm, SchemeSel, SchemeOut, SchemeLast }; /* color schemes */
+enum { SchemeNorm, SchemeSel, SchemeNormHighlight, SchemeSelHighlight,
+       SchemeOut, SchemeLast }; /* color schemes */
 
 struct item {
 	char *text;
 	struct item *left, *right;
 	int out;
+    double distance;
 };
 
+static struct {
+	pid_t pid;
+	int enable, in[2], out[2];
+	char buf[256];
+} qalc;
+
+static char qalc_acc[1024];
+static size_t qalc_len;
 static char text[BUFSIZ] = "";
 static char *embed;
 static int bh, mw, mh;
@@ -100,7 +117,7 @@ cleanup(void)
 {
 	size_t i;
 
-	XUngrabKey(dpy, AnyKey, AnyModifier, root);
+	XUngrabKeyboard(dpy, CurrentTime);
 	for (i = 0; i < SchemeLast; i++)
 		free(scheme[i]);
 	for (i = 0; items && items[i].text; ++i)
@@ -129,9 +146,128 @@ cistrstr(const char *h, const char *n)
 	return NULL;
 }
 
+static void
+drawhighlights(struct item *item, int x, int y, int maxw)
+{
+	int i, indent;
+	char c, *highlight;
+
+	if (!(strlen(item->text) && strlen(text)))
+		return;
+
+	drw_setscheme(drw, scheme[item == sel
+	                   ? SchemeSelHighlight
+	                   : SchemeNormHighlight]);
+	for (i = 0, highlight = item->text; *highlight && text[i];) {
+		if (!fstrncmp(highlight, &text[i], 1)) {
+			/* get indentation */
+			c = *highlight;
+			*highlight = '\0';
+			indent = TEXTW(item->text);
+			*highlight = c;
+
+			/* highlight character */
+			c = highlight[1];
+			highlight[1] = '\0';
+			drw_text(
+				drw,
+				x + indent - (lrpad / 2.),
+				y,
+				MIN(maxw - indent, TEXTW(highlight) - lrpad),
+				bh, 0, highlight, 0
+			);
+			highlight[1] = c;
+			++i;
+		}
+		++highlight;
+	}
+}
+
+int
+compare_distance(const void *a, const void *b)
+{
+	struct item *da = *(struct item **) a;
+	struct item *db = *(struct item **) b;
+
+	if (!db)
+		return 1;
+	if (!da)
+		return -1;
+
+	return da->distance == db->distance ? 0 : da->distance < db->distance ? -1 : 1;
+}
+
+void
+fuzzymatch(void)
+{
+	/* bang - we have so much memory */
+	struct item *it;
+	struct item **fuzzymatches = NULL;
+	char c;
+	int number_of_matches = 0, i, pidx, sidx, eidx;
+	int text_len = strlen(text), itext_len;
+
+	matches = matchend = NULL;
+
+	/* walk through all items */
+	for (it = items; it && it->text; ++it) {
+		if (text_len) {
+			itext_len = strlen(it->text);
+			pidx = 0; /* pointer */
+			sidx = eidx = -1; /* start of match, end of match */
+			/* walk through item text */
+			for (i = 0; i < itext_len && (c = it->text[i]); ++i) {
+				/* fuzzy match pattern */
+				if (!fstrncmp(&text[pidx], &c, 1)) {
+					if(sidx == -1)
+						sidx = i;
+					++pidx;
+					if (pidx == text_len) {
+						eidx = i;
+						break;
+					}
+				}
+			}
+			/* build list of matches */
+			if (eidx != -1) {
+				/* compute distance */
+				/* add penalty if match starts late (log(sidx+2))
+				 * add penalty for long a match without many matching characters */
+				it->distance = log(sidx + 2) + (double)(eidx - sidx - text_len);
+				/* fprintf(stderr, "distance %s %f\n", it->text, it->distance); */
+				appenditem(it, &matches, &matchend);
+				++number_of_matches;
+			}
+		} else {
+			appenditem(it, &matches, &matchend);
+		}
+	}
+
+	if (number_of_matches) {
+		/* initialize array with matches */
+		if (!(fuzzymatches = realloc(fuzzymatches,
+		                             number_of_matches * sizeof(struct item *))))
+			die("cannot realloc %u bytes:", number_of_matches * sizeof(struct item *));
+		for (i = 0, it = matches; it && i < number_of_matches; ++i, it = it->right)
+			fuzzymatches[i] = it;
+		/* sort matches according to distance */
+		qsort(fuzzymatches, number_of_matches, sizeof(struct item*), compare_distance);
+		/* rebuild list of matches */
+		matches = matchend = NULL;
+		for (i = 0, it = fuzzymatches[i]; i < number_of_matches && it &&
+		        it->text; ++i, it = fuzzymatches[i])
+			appenditem(it, &matches, &matchend);
+		free(fuzzymatches);
+	}
+	curr = sel = matches;
+	calcoffsets();
+}
+
+
 static int
 drawitem(struct item *item, int x, int y, int w)
 {
+    int r;
 	if (item == sel)
 		drw_setscheme(drw, scheme[SchemeSel]);
 	else if (item->out)
@@ -139,7 +275,10 @@ drawitem(struct item *item, int x, int y, int w)
 	else
 		drw_setscheme(drw, scheme[SchemeNorm]);
 
-	return drw_text(drw, x, y, w, bh, lrpad / 2, item->text, 0);
+    r = drw_text(drw, x, y, w, bh, lrpad / 2, item->text, 0);
+    if (!qalc.enable)
+        drawhighlights(item, x, y, w);
+	return r;
 }
 
 static void
@@ -227,8 +366,88 @@ grabkeyboard(void)
 }
 
 static void
+qalc_init(void)
+{
+	pipe(qalc.in);
+	pipe2(qalc.out, O_NONBLOCK);
+	qalc.pid = fork();
+	if (qalc.pid == -1)
+		die("failed to fork for qalc");
+	if (qalc.pid == 0) {
+		dup2(qalc.in[0], STDIN_FILENO);
+		dup2(qalc.out[1], STDOUT_FILENO);
+		close(qalc.in[1]);
+		close(qalc.out[0]);
+		prctl(PR_SET_PDEATHSIG, SIGTERM);
+		execl("/usr/bin/qalc", "qalc", "-c0", "-t", NULL);
+		die("execl qalc failed");
+	} else { /* parent */
+		close(qalc.in[0]);
+		close(qalc.out[1]);
+		items = malloc(sizeof(struct item) * 2);
+		items[0].text = malloc(LENGTH(qalc.buf));
+        items[0].text[0] = '\0';
+		items[1].out = 0;
+		items[1].text = NULL;
+	}
+}
+
+static void
+qalc_recv(void)
+{
+    ssize_t r;
+    while ((r = read(qalc.out[0], qalc_acc + qalc_len,
+                     sizeof(qalc_acc) - qalc_len - 1)) > 0) {
+        qalc_len += r;
+        qalc_acc[qalc_len] = '\0';
+
+        char *line;
+        while ((line = strchr(qalc_acc, '\n'))) {
+            *line = '\0';
+
+            if (qalc_acc[0] != '\0') {
+                strncpy(items[0].text, qalc_acc + 2, LENGTH(qalc.buf) - 1);
+
+                items[0].text[LENGTH(qalc.buf) - 1] = '\0';
+            }
+
+            memmove(qalc_acc, line + 1,
+                    qalc_len - (line + 1 - qalc_acc));
+            qalc_len -= (line + 1 - qalc_acc);
+        }
+    }
+}
+
+static void
+qalc_send(void)
+{
+    items[0].text[0] = '\0';
+    write(qalc.in[1], text, strlen(text));
+    write(qalc.in[1], "\n", 1);
+}
+
+static void
+qalc_match(void)
+{
+	matches = matchend = NULL;
+	appenditem(items, &matches, &matchend);
+	curr = sel = matches;
+	calcoffsets();
+}
+
+static void
 match(void)
 {
+    if (qalc.enable) {
+		qalc_match();
+		return;
+	}
+
+    if (fuzzy) {
+		fuzzymatch();
+		return;
+	}
+
 	static char **tokv = NULL;
 	static int tokn = 0;
 
@@ -277,6 +496,13 @@ match(void)
 		matchend = substrend;
 	}
 	curr = sel = matches;
+    
+	if (instant && matches && matches==matchend && !lsubstr) {
+		puts(matches->text);
+		cleanup();
+		exit(0);
+	}
+
 	calcoffsets();
 }
 
@@ -523,6 +749,9 @@ insert:
 		break;
 	}
 
+    if (qalc.enable)
+        qalc_send();
+
 draw:
 	drawmenu();
 }
@@ -577,35 +806,47 @@ run(void)
 {
 	XEvent ev;
 
-	while (!XNextEvent(dpy, &ev)) {
-		if (XFilterEvent(&ev, win))
-			continue;
-		switch(ev.type) {
-		case DestroyNotify:
-			if (ev.xdestroywindow.window != win)
+    int xfd = ConnectionNumber(dpy);
+	struct pollfd fds[] = {
+		{xfd, POLLIN, 0},
+		{qalc.out[0], POLLIN, 0},
+	};
+	while (poll(fds, 2, -1) > 0) {
+		if (qalc.enable && fds[1].revents & POLLIN) {
+			qalc_recv();
+			drawmenu();
+		}
+		while (XPending(dpy) && !XNextEvent(dpy, &ev)) {
+			if (XFilterEvent(&ev, win))
+				continue;
+			switch (ev.type) {
+			case DestroyNotify:
+				if (ev.xdestroywindow.window != win)
+					break;
+				cleanup();
+				exit(1);
+			case Expose:
+				if (ev.xexpose.count == 0)
+					drw_map(drw, win, 0, 0, mw, mh);
 				break;
-			cleanup();
-			exit(1);
-		case Expose:
-			if (ev.xexpose.count == 0)
-				drw_map(drw, win, 0, 0, mw, mh);
-			break;
-		case FocusIn:
-			/* regrab focus from parent window */
-			if (ev.xfocus.window != win)
-				grabfocus();
-			break;
-		case KeyPress:
-			keypress(&ev.xkey);
-			break;
-		case SelectionNotify:
-			if (ev.xselection.property == utf8)
-				paste();
-			break;
-		case VisibilityNotify:
-			if (ev.xvisibility.state != VisibilityUnobscured)
-				XRaiseWindow(dpy, win);
-			break;
+            case FocusIn:
+				/* regrab focus from parent window */
+				if (ev.xfocus.window != win)
+					grabfocus();
+				break;
+			case KeyPress:
+				keypress(&ev.xkey);
+				break;
+			case SelectionNotify:
+				if (ev.xselection.property == utf8)
+					paste();
+				break;
+			case VisibilityNotify:
+				if (ev.xvisibility.state != VisibilityUnobscured)
+					XRaiseWindow(dpy, win);
+				break;
+			}
+
 		}
 	}
 }
@@ -633,7 +874,8 @@ setup(void)
 	utf8 = XInternAtom(dpy, "UTF8_STRING", False);
 
 	/* calculate menu geometry */
-	bh = drw->fonts->h + 2;
+    bh = drw->fonts->h;
+	bh = user_bh ? bh + user_bh : bh + 2;
 	lines = MAX(lines, 0);
 	mh = (lines + 1) * bh;
 #ifdef XINERAMA
@@ -689,7 +931,6 @@ setup(void)
 	                    CWOverrideRedirect | CWBackPixel | CWEventMask, &swa);
 	XSetClassHint(dpy, win, &ch);
 
-
 	/* input methods */
 	if ((xim = XOpenIM(dpy, NULL, NULL, NULL)) == NULL)
 		die("XOpenIM failed: could not open input device");
@@ -715,8 +956,9 @@ setup(void)
 static void
 usage(void)
 {
-	die("usage: dmenu [-bfiv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
-	    "             [-nb color] [-nf color] [-sb color] [-sf color] [-w windowid]");
+	die("usage: dmenu [-bCFfinv] [-l lines] [-p prompt] [-fn font] [-m monitor]\n"
+        "             [-nb color] [-nf color] [-sb color] [-sf color]\n"
+        "             [-nhb color] [-nhf color] [-shb color] [-shf color] [-w windowid]");
 }
 
 int
@@ -730,14 +972,20 @@ main(int argc, char *argv[])
 		if (!strcmp(argv[i], "-v")) {      /* prints version information */
 			puts("dmenu-"VERSION);
 			exit(0);
-		} else if (!strcmp(argv[i], "-b")) /* appears at the bottom of the screen */
+        } else if (!strcmp(argv[i], "-b")) /* appears at the bottom of the screen */
 			topbar = 0;
+        else if (!strcmp(argv[i], "-C"))   /* enable calculator */
+			qalc.enable = 1;
+        else if (!strcmp(argv[i], "-F"))   /* disables fuzzy matching */
+			fuzzy = 0;
 		else if (!strcmp(argv[i], "-f"))   /* grabs keyboard before reading stdin */
 			fast = 1;
 		else if (!strcmp(argv[i], "-i")) { /* case-insensitive item matching */
 			fstrncmp = strncasecmp;
 			fstrstr = cistrstr;
-		} else if (i + 1 == argc)
+		} else if (!strcmp(argv[i], "-n")) /* instant select only match */
+            instant = 1;
+        else if (i + 1 == argc)
 			usage();
 		/* these options take one argument */
 		else if (!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
@@ -756,6 +1004,14 @@ main(int argc, char *argv[])
 			colors[SchemeSel][ColBg] = argv[++i];
 		else if (!strcmp(argv[i], "-sf"))  /* selected foreground color */
 			colors[SchemeSel][ColFg] = argv[++i];
+        else if (!strcmp(argv[i], "-nhb")) /* normal hi background color */
+			colors[SchemeNormHighlight][ColBg] = argv[++i];
+		else if (!strcmp(argv[i], "-nhf")) /* normal hi foreground color */
+			colors[SchemeNormHighlight][ColFg] = argv[++i];
+		else if (!strcmp(argv[i], "-shb")) /* selected hi background color */
+			colors[SchemeSelHighlight][ColBg] = argv[++i];
+		else if (!strcmp(argv[i], "-shf")) /* selected hi foreground color */
+			colors[SchemeSelHighlight][ColFg] = argv[++i];
 		else if (!strcmp(argv[i], "-w"))   /* embedding window id */
 			embed = argv[++i];
 		else
@@ -782,7 +1038,10 @@ main(int argc, char *argv[])
 		die("pledge");
 #endif
 
-	if (fast && !isatty(0)) {
+    if (qalc.enable) {
+		qalc_init();
+		grabkeyboard();
+	} else if (fast && !isatty(0)) {
 		grabkeyboard();
 		readstdin();
 	} else {
