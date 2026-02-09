@@ -1,0 +1,7 @@
+(optional) install timewarrior
+
+add focusmode.txt with categories to ~/.config
+the first category is IDLE, it stops time tracking
+
+copy focusmode.sh to /usr/bin
+
