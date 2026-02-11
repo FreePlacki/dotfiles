@@ -1,0 +1,11 @@
+[Unit]
+Description=Stop timew on shutdown
+DefaultDependencies=no
+Before=shutdown.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/timew stop
+
+[Install]
+WantedBy=shutdown.target

@@ -1,7 +1,12 @@
-(optional) install timewarrior
+install timewarrior
 
 add focusmode.txt with categories to ~/.config
 the first category is IDLE, it stops time tracking
 
 copy focusmode.sh to /usr/bin
 
+add timew-stop.service to ~/.config/systemd/user/
+and enable by:
+systemctl --user daemon-relead
+systemctl --user enable timew-stop.service
+loginctl enable-linger $USER
