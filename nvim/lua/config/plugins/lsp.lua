@@ -1,4 +1,5 @@
 vim.lsp.enable('gdscript')
+vim.lsp.enable('kotlin_language_server')
 
 vim.lsp.config('rust_analyzer', {
   settings = {
@@ -6,6 +7,38 @@ vim.lsp.config('rust_analyzer', {
       diagnostics = {
         enable = true,
       }
+    }
+  }
+})
+
+vim.lsp.config('harper_ls', {
+  settings = {
+    ["harper-ls"] = {
+      linters = {
+        SpellCheck = true,
+        SpelledNumbers = false,
+        AnA = true,
+        SentenceCapitalization = false,
+        UnclosedQuotes = true,
+        WrongQuotes = false,
+        LongSentences = false,
+        RepeatedWords = true,
+        Spaces = true,
+        Matcher = true,
+        CorrectNumberSuffix = true
+      },
+      codeActions = {
+        ForceStable = false
+      },
+      markdown = {
+        IgnoreLinkTitle = false
+      },
+      diagnosticSeverity = "hint",
+      isolateEnglish = false,
+      dialect = "American",
+      maxFileLength = 120000,
+      ignoredLintsPath = "",
+      excludePatterns = {}
     }
   }
 })

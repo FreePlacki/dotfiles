@@ -6,8 +6,11 @@ vim.keymap.set("v", "<leader>x", ":lua<CR>")
 vim.keymap.set("n", "-", "<CMD>Oil<CR>")
 
 vim.keymap.set("n", "<leader>f", vim.lsp.buf.format)
-vim.keymap.set("n", "]d", function() vim.diagnostic.jump {count = 1, float = true} end)
-vim.keymap.set("n", "[d", function() vim.diagnostic.jump {count = -1, float = true} end)
+-- jump only on error and warning, to avoid jumping to harper diagnostics
+vim.keymap.set("n", "]d",
+  function() vim.diagnostic.jump { count = 1, float = true, severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN } } end)
+vim.keymap.set("n", "[d",
+  function() vim.diagnostic.jump { count = -1, float = true, severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN } } end)
 
 vim.keymap.set("n", "<leader>pf", require("telescope.builtin").find_files)
 vim.keymap.set("n", "<leader>ps", require("telescope.builtin").live_grep)
