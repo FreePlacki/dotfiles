@@ -1,5 +1,5 @@
 vim.pack.add {
-    "file:///home/freeplacki/coding/halberd.nvim"
+    "https://codeberg.org/WaspByte/halberd.nvim"
 }
 
 local halberd = require("halberd")

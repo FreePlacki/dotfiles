@@ -6,7 +6,7 @@
     },
     "halberd.nvim": {
       "rev": "45263c95b6acaf2ac44fe7bda08d916d4d29e2d3",
-      "src": "file:///home/freeplacki/coding/halberd.nvim"
+      "src": "https://codeberg.org/WaspByte/halberd.nvim"
     },
     "lasso.nvim": {
       "rev": "d2b4c8a7d94a24864a40467e7ac72f137c828c52",
