@@ -1,11 +1,14 @@
-require("config.set")
-require("config.lazy")
-require("config.remap")
+require("set")
+require("remap")
 
-vim.api.nvim_create_autocmd("TextYankPost", {
-  desc = "Highlight on yank",
-  group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
-  callback = function()
-    vim.hl.on_yank()
-  end,
-})
+function loadPlugins()
+    local config = vim.fn.stdpath("config")
+    local plugins = "plugins"
+    local dir = vim.fs.dir(config .. "/lua/" .. plugins)
+    for name, _ in dir do
+        local filename = string.sub(name, 1, -5) -- remove '.lua'
+    	require(plugins .. "." .. filename)
+    end
+end
+loadPlugins()
+
