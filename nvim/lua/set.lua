@@ -36,3 +36,5 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 })
 
 vim.cmd.colorscheme("retrobox")
+
+require('vim._core.ui2').enable() -- disables 'PRESS ENTER'
