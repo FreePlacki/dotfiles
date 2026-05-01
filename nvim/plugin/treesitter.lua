@@ -4,5 +4,5 @@ vim.pack.add({
 })
 
 require("tree-sitter-manager").setup {
-	auto_install = true
+	-- auto_install = true
 }
