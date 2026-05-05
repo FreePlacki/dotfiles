@@ -9,3 +9,4 @@ vim.keymap.set("n", "]d",
 vim.keymap.set("n", "[d",
   function() vim.diagnostic.jump { count = -1, float = true, severity = { vim.diagnostic.severity.ERROR, vim.diagnostic.severity.WARN } } end)
 
+  vim.api.nvim_create_user_command("W", "write", {})
